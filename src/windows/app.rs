@@ -9,32 +9,30 @@ use windows::{
     core::{HSTRING, Result},
 };
 
-use super::Com;
+use super::COM;
 
-static MANAGER: LazyLock<Com<IApplicationActivationManager>> =
-    LazyLock::new(|| Com::create(&ApplicationActivationManager).unwrap());
+static MANAGER: LazyLock<COM<IApplicationActivationManager>> =
+    LazyLock::new(|| COM::create(&ApplicationActivationManager).unwrap());
 
-static SETTINGS: LazyLock<Com<IPackageDebugSettings>> =
-    LazyLock::new(|| Com::create(&PackageDebugSettings).unwrap());
+static SETTINGS: LazyLock<COM<IPackageDebugSettings>> =
+    LazyLock::new(|| COM::create(&PackageDebugSettings).unwrap());
 
-pub struct App {
-    value: AppDiagnosticInfo,
-}
+pub struct App(AppDiagnosticInfo);
 
 impl App {
     pub fn new(value: &str) -> Result<Self> {
-        Ok(Self {
-            value: AppDiagnosticInfo::RequestInfoForAppUserModelId(&HSTRING::from(value))?
+        Ok(Self(
+            AppDiagnosticInfo::RequestInfoForAppUserModelId(&HSTRING::from(value))?
                 .get()?
                 .First()?
                 .Current()?,
-        })
+        ))
     }
 
     pub fn launch(&self) -> Result<u32> {
         unsafe {
             MANAGER.ActivateApplication(
-                &self.value.AppInfo()?.AppUserModelId()?,
+             &self.0.AppInfo()?.AppUserModelId()?,
                 None,
                 AO_NOERRORUI,
             )
@@ -42,7 +40,7 @@ impl App {
     }
 
     pub fn running(&self) -> Result<bool> {
-        Ok(self.value.GetResourceGroups().iter().any(|value| {
+        Ok(self.0.GetResourceGroups().iter().any(|value| {
             value
                 .into_iter()
                 .any(|value| match value.GetMemoryReport() {
@@ -57,7 +55,7 @@ impl App {
     }
 
     pub fn package(&self) -> Result<Package> {
-        self.value.AppInfo()?.Package()
+        self.0.AppInfo()?.Package()
     }
 
     pub fn debug(&self, value: bool) -> Result<()> {

@@ -1,4 +1,4 @@
-use crate::windows::{App, Process, WString};
+use crate::windows::{App, CWSTR, Process};
 use spinwait::SpinWait;
 use std::path::Path;
 use std::sync::LazyLock;
@@ -13,8 +13,8 @@ use windows::{
 static APP: LazyLock<App> =
     LazyLock::new(|| App::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App").unwrap());
 
-static PACKAGE: LazyLock<WString> =
-    LazyLock::new(|| WString::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe"));
+static PACKAGE: LazyLock<CWSTR> =
+    LazyLock::new(|| CWSTR::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe"));
 
 fn launch() -> Result<Process> {
     let string = format!(

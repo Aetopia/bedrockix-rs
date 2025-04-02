@@ -5,9 +5,7 @@ pub mod process;
 pub use process::Process;
 
 pub mod com;
-pub use com::Com;
+pub use com::COM;
 
-pub mod wstring;
-pub use wstring::WString;
-
-pub mod library;
+pub mod cwstr;
+pub use cwstr::CWSTR;
