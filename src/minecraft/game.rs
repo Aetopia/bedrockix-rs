@@ -1,4 +1,4 @@
-use crate::windows::{App, Process};
+use crate::windows::{App, Process, WString};
 use spinwait::SpinWait;
 use std::path::Path;
 use std::sync::LazyLock;
@@ -7,18 +7,14 @@ use windows::{
     Win32::{
         Foundation::ERROR_INSUFFICIENT_BUFFER, Storage::Packaging::Appx::GetPackagesByPackageFamily,
     },
-    core::{PCWSTR, Result, w},
+    core::Result,
 };
-
-struct WString(PCWSTR);
-unsafe impl Send for WString {}
-unsafe impl Sync for WString {}
 
 static APP: LazyLock<App> =
     LazyLock::new(|| App::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App").unwrap());
 
 static PACKAGE: LazyLock<WString> =
-    LazyLock::new(|| WString(w!("Microsoft.MinecraftUWP_8wekyb3d8bbwe")));
+    LazyLock::new(|| WString::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe"));
 
 fn launch() -> Result<Process> {
     let string = format!(
@@ -67,6 +63,10 @@ impl Game {
         APP.terminate()
     }
 
+    pub fn running() -> Result<bool> {
+        APP.running()
+    }
+
     pub fn unpackaged() -> Result<bool> {
         APP.package()?.IsDevelopmentMode()
     }
@@ -76,14 +76,8 @@ impl Game {
         let mut bufferlength = 0u32;
 
         unsafe {
-            GetPackagesByPackageFamily(
-                PACKAGE.0,
-                &mut count,
-                None,
-                &mut bufferlength,
-                None,
-            )
-            .0 == ERROR_INSUFFICIENT_BUFFER.0
+            GetPackagesByPackageFamily(PACKAGE.0, &mut count, None, &mut bufferlength, None).0
+                == ERROR_INSUFFICIENT_BUFFER.0
         }
     }
 }
