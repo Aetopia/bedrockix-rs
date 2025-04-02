@@ -7,5 +7,9 @@ pub use process::Process;
 pub mod com;
 pub use com::COM;
 
-pub mod cwstr;
-pub use cwstr::CWSTR;
+pub mod strings;
+pub use strings::CWSTR;
+pub use strings::CSTR;
+
+pub mod procedure;
+pub use procedure::Procedure;
