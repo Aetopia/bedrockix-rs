@@ -1,7 +1,3 @@
-use std::{
-    ffi::{OsStr, OsString},
-    os::windows::ffi::OsStrExt,
-};
 
 use windows::core::{PCSTR, PCWSTR, PWSTR};
 
@@ -16,10 +12,7 @@ impl CWSTR {
         let mut vector: Vec<u16> = value.encode_utf16().collect();
         vector.push(0);
        
-        Self {
-            0: PCWSTR(vector.as_ptr()),
-            1: vector,
-        }
+        Self(PCWSTR(vector.as_ptr()), vector)
     }
 }
 
@@ -34,10 +27,7 @@ impl WSTR {
         let mut vector: Vec<u16> = value.encode_utf16().collect();
         vector.push(0);
 
-        Self {
-            0: PWSTR(vector.as_mut_ptr()),
-            1: vector,
-        }
+        Self(PWSTR(vector.as_mut_ptr()), vector)
     }
 }
 
@@ -52,9 +42,6 @@ impl CSTR {
         let mut vector = value.as_bytes().to_vec();
         vector.push(0);
     
-        Self {
-            0: PCSTR(vector.as_ptr()),
-            1: vector,
-        }
+        Self(PCSTR(vector.as_ptr()), vector)
     }
 }

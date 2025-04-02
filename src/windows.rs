@@ -13,7 +13,6 @@ pub use strings::CSTR;
 pub use strings::WSTR;
 
 pub mod procedure;
-pub use procedure::Procedure;
 
 pub mod access;
 pub use access::Access;

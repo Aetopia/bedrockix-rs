@@ -16,43 +16,43 @@ static APP: LazyLock<App> =
 static PACKAGE: LazyLock<CWSTR> =
     LazyLock::new(|| CWSTR::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe"));
 
-fn launch() -> Result<Process> {
-    let string = format!(
-        "{}{}",
-        ApplicationDataManager::CreateForPackageFamily(&APP.package()?.Id()?.FamilyName()?)?
-            .LocalFolder()?
-            .Path()?,
-        r"\games\com.mojang\minecraftpe\resource_init_lock"
-    );
-    let path = Path::new(&string);
-
-    if !APP.running()? || path.exists() {
-        let process = Process::new(APP.launch()?)?;
-        let wait = SpinWait::new();
-        let mut value = false;
-
-        while process.running() {
-            if value {
-                if !path.exists() {
-                    break;
-                }
-            } else {
-                value = path.exists()
-            }
-            wait.spin_once();
-        }
-
-        return Ok(process);
-    }
-
-    Process::new(APP.launch()?)
-}
-
 pub struct Game;
 
 impl Game {
+    pub(crate) fn activate() -> Result<Process> {
+        let string = format!(
+            "{}{}",
+            ApplicationDataManager::CreateForPackageFamily(&APP.package()?.Id()?.FamilyName()?)?
+                .LocalFolder()?
+                .Path()?,
+            r"\games\com.mojang\minecraftpe\resource_init_lock"
+        );
+        let path = Path::new(&string);
+
+        if !APP.running()? || path.exists() {
+            let process = Process::new(APP.launch()?)?;
+            let wait = SpinWait::new();
+            let mut value = false;
+
+            while process.running() {
+                if value {
+                    if !path.exists() {
+                        break;
+                    }
+                } else {
+                    value = path.exists()
+                }
+                wait.spin_once();
+            }
+
+            return Ok(process);
+        }
+
+        Process::new(APP.launch()?)
+    }
+
     pub fn launch(value: bool) -> Result<u32> {
-        Ok(if value { launch()?.id } else { APP.launch()? })
+        Ok(if value { Self::activate()?.id } else { APP.launch()? })
     }
 
     pub fn debug(value: bool) -> Result<()> {
