@@ -1,3 +1,4 @@
+use super::COM;
 use std::sync::LazyLock;
 use windows::{
     ApplicationModel::Package,
@@ -8,8 +9,6 @@ use windows::{
     },
     core::{HSTRING, Result},
 };
-
-use super::COM;
 
 static MANAGER: LazyLock<COM<IApplicationActivationManager>> =
     LazyLock::new(|| COM::create(&ApplicationActivationManager).unwrap());
@@ -31,11 +30,7 @@ impl App {
 
     pub fn launch(&self) -> Result<u32> {
         unsafe {
-            MANAGER.ActivateApplication(
-             &self.0.AppInfo()?.AppUserModelId()?,
-                None,
-                AO_NOERRORUI,
-            )
+            MANAGER.ActivateApplication(&self.0.AppInfo()?.AppUserModelId()?, None, AO_NOERRORUI)
         }
     }
 

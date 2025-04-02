@@ -1,7 +1,6 @@
-use crate::windows::{App, CWSTR, Process};
+use std::{path::Path, sync::LazyLock};
+
 use spinwait::SpinWait;
-use std::path::Path;
-use std::sync::LazyLock;
 use windows::{
     Management::Core::ApplicationDataManager,
     Win32::{
@@ -9,6 +8,8 @@ use windows::{
     },
     core::Result,
 };
+
+use crate::windows::{App, CWSTR, Process};
 
 static APP: LazyLock<App> =
     LazyLock::new(|| App::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App").unwrap());
@@ -52,7 +53,11 @@ impl Game {
     }
 
     pub fn launch(value: bool) -> Result<u32> {
-        Ok(if value { Self::activate()?.id } else { APP.launch()? })
+        Ok(if value {
+            Self::activate()?.id
+        } else {
+            APP.launch()?
+        })
     }
 
     pub fn debug(value: bool) -> Result<()> {

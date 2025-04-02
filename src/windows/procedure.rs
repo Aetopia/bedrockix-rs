@@ -1,6 +1,8 @@
 use super::{CSTR, CWSTR};
-use windows::Win32::System::LibraryLoader::{GetModuleHandleW, GetProcAddress};
-use windows::core::{Error, Result};
+use windows::{
+    Win32::System::LibraryLoader::{GetModuleHandleW, GetProcAddress},
+    core::{Error, Result},
+};
 
 pub struct Procedure(pub usize);
 

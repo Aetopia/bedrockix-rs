@@ -14,5 +14,5 @@ pub use strings::WSTR;
 
 pub mod procedure;
 
-pub mod access;
-pub use access::Access;
+pub mod acl;
+pub use acl::Acl;
