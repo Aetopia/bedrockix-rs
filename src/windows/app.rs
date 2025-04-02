@@ -1,5 +1,4 @@
 use std::sync::LazyLock;
-
 use windows::{
     ApplicationModel::Package,
     System::AppDiagnosticInfo,

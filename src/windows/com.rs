@@ -1,5 +1,4 @@
 use std::ops::Deref;
-
 use windows::{
     Win32::System::Com::{
         CLSCTX_INPROC_SERVER, COINIT_DISABLE_OLE1DDE, COINIT_MULTITHREADED, CoCreateInstance,
