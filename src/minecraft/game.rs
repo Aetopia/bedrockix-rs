@@ -10,15 +10,15 @@ use windows::{
     core::{PCWSTR, Result, w},
 };
 
-struct WSTRING(PCWSTR);
-unsafe impl Send for WSTRING {}
-unsafe impl Sync for WSTRING {}
+struct WString(PCWSTR);
+unsafe impl Send for WString {}
+unsafe impl Sync for WString {}
 
 static APP: LazyLock<App> =
     LazyLock::new(|| App::new("Microsoft.MinecraftUWP_8wekyb3d8bbwe!App").unwrap());
 
-static PACKAGE: LazyLock<WSTRING> =
-    LazyLock::new(|| WSTRING(w!("Microsoft.MinecraftUWP_8wekyb3d8bbwe")));
+static PACKAGE: LazyLock<WString> =
+    LazyLock::new(|| WString(w!("Microsoft.MinecraftUWP_8wekyb3d8bbwe")));
 
 fn launch() -> Result<Process> {
     let string = format!(
@@ -49,7 +49,7 @@ fn launch() -> Result<Process> {
         return Ok(process);
     }
 
-    Ok(Process::new(APP.launch()?)?)
+    Process::new(APP.launch()?)
 }
 
 pub struct Game;
@@ -76,9 +76,14 @@ impl Game {
         let mut bufferlength = 0u32;
 
         unsafe {
-            return GetPackagesByPackageFamily(PACKAGE.0, &mut count, None, &mut bufferlength, None)
-                .0
-                == ERROR_INSUFFICIENT_BUFFER.0;
+            GetPackagesByPackageFamily(
+                PACKAGE.0,
+                &mut count,
+                None,
+                &mut bufferlength,
+                None,
+            )
+            .0 == ERROR_INSUFFICIENT_BUFFER.0
         }
     }
 }

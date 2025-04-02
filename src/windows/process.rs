@@ -24,8 +24,8 @@ impl Process {
     pub fn running(&self) -> bool {
         let mut code = 0u32;
         unsafe {
-            return GetExitCodeProcess(self.handle, &mut code).is_ok()
-                && code as i32 == STATUS_PENDING.0;
+            GetExitCodeProcess(self.handle, &mut code).is_ok()
+                && code as i32 == STATUS_PENDING.0
         }
     }
 }

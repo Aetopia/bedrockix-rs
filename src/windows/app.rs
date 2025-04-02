@@ -10,13 +10,13 @@ use windows::{
     core::{HSTRING, Result},
 };
 
-use super::COM;
+use super::Com;
 
-static MANAGER: LazyLock<COM<IApplicationActivationManager>> =
-    LazyLock::new(|| COM::create(&ApplicationActivationManager).unwrap());
+static MANAGER: LazyLock<Com<IApplicationActivationManager>> =
+    LazyLock::new(|| Com::create(&ApplicationActivationManager).unwrap());
 
-static SETTINGS: LazyLock<COM<IPackageDebugSettings>> =
-    LazyLock::new(|| COM::create(&PackageDebugSettings).unwrap());
+static SETTINGS: LazyLock<Com<IPackageDebugSettings>> =
+    LazyLock::new(|| Com::create(&PackageDebugSettings).unwrap());
 
 pub struct App {
     value: AppDiagnosticInfo,
@@ -58,7 +58,7 @@ impl App {
     }
 
     pub fn package(&self) -> Result<Package> {
-        Ok(self.value.AppInfo()?.Package()?)
+        self.value.AppInfo()?.Package()
     }
 
     pub fn debug(&self, value: bool) -> Result<()> {
