@@ -1,6 +1,4 @@
-use std::{
-    mem::transmute, os::raw::c_void, path::absolute, ptr::null_mut, sync::LazyLock,
-};
+use std::{mem::transmute, os::raw::c_void, path::absolute, ptr::null_mut, sync::LazyLock};
 
 use windows::{
     Win32::{
@@ -21,7 +19,7 @@ use windows::{
             Threading::{CreateRemoteThread, INFINITE, WaitForSingleObject},
         },
     },
-    core::Result,
+    core::{Error, Result},
 };
 
 use crate::windows::{Acl, CWSTR, Process, WSTR, procedure::Procedure};
@@ -102,6 +100,8 @@ pub fn load(process: &Process, value: &str) -> Result<()> {
                 _ = VirtualFreeEx(process.handle, parameter, 0, MEM_RELEASE);
             }
         }
+    } else {
+        return Err(Error::empty());
     }
     Ok(())
 }
